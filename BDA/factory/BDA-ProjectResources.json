@@ -1,0 +1,9 @@
+{
+	"name": "BDA-ProjectResources",
+	"location": "eastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "42434f51-6600-4cb5-9a61-1f2b50fb9b3a",
+		"tenantId": "5ba5ef5e-3109-4e77-85bd-cfeb0d347e82"
+	}
+}
