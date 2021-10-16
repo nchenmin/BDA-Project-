@@ -21,7 +21,7 @@
 					},
 					{
 						"name": "Destination",
-						"value": "BatchBeerDB/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}/BatchBeerDB"
+						"value": "BatchBeerDB/@{concat(formatDateTime(pipeline().parameters.windowStart,'yy'), '/', formatDateTime(pipeline().parameters.windowStart,'MM'), '/', formatDateTime(pipeline().parameters.windowStart,'dd'))}/BatchBeerDB"
 					}
 				],
 				"typeProperties": {
@@ -50,7 +50,8 @@
 							"linkedServiceName": {
 								"referenceName": "AzureDataLakeStorage1",
 								"type": "LinkedServiceReference"
-							}
+							},
+							"path": "beercontainer"
 						}
 					},
 					"translator": {
