@@ -22,8 +22,19 @@
 			"recurrence": {
 				"frequency": "Week",
 				"interval": 1,
-				"startTime": "2021-10-17T00:16:00",
-				"timeZone": "Singapore Standard Time"
+				"startTime": "2021-10-17T00:27:00",
+				"timeZone": "Singapore Standard Time",
+				"schedule": {
+					"weekDays": [
+						"Saturday",
+						"Friday",
+						"Wednesday",
+						"Thursday",
+						"Tuesday",
+						"Monday",
+						"Sunday"
+					]
+				}
 			}
 		}
 	}
