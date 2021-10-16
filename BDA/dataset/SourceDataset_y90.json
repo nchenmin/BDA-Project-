@@ -1,0 +1,78 @@
+{
+	"name": "SourceDataset_y90",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "beer_ABV",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "beer_beerId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "beer_brewerId",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "beer_name",
+				"type": "varchar"
+			},
+			{
+				"name": "beer_style",
+				"type": "varchar"
+			},
+			{
+				"name": "review_appearance",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "review_palette",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "review_overall",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "review_taste",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "review_profileName",
+				"type": "varchar"
+			},
+			{
+				"name": "review_aroma",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "review_text",
+				"type": "varchar"
+			},
+			{
+				"name": "review_time",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "BeerProject"
+		}
+	}
+}
