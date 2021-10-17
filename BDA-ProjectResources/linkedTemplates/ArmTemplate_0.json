@@ -26,6 +26,10 @@
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://beerstorage123.dfs.core.windows.net"
+		},
+		"Trigger_1mg_properties_BatchIngestBeer_parameters_windowStart": {
+			"type": "string",
+			"defaultValue": "@trigger().scheduledTime"
 		}
 	},
 	"variables": {
@@ -175,6 +179,49 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_1mg')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Link to blob storage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_fileName": {
+						"type": "String"
+					},
+					"cw_folderPath": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().cw_fileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().cw_folderPath",
+							"type": "Expression"
+						},
+						"container": "beercontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Json1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -195,6 +242,89 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_1mg')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQL Beer Review DB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "beer_ABV",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "beer_beerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "beer_brewerId",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "beer_name",
+						"type": "varchar"
+					},
+					{
+						"name": "beer_style",
+						"type": "varchar"
+					},
+					{
+						"name": "review_appearance",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "review_palette",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "review_overall",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "review_taste",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "review_profileName",
+						"type": "varchar"
+					},
+					{
+						"name": "review_aroma",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "review_time",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "review_text",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BeerProject"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQL Beer Review DB')]"
 			]
 		},
 		{
@@ -222,6 +352,90 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BatchIngestBeer')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Batch Ingestion Beer Review DataBase",
+				"activities": [
+					{
+						"name": "Copy_1mg",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "dbo.BeerProject"
+							},
+							{
+								"name": "Destination",
+								"value": "beercontainer/BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"maxRowsPerFile": 10000000,
+									"fileNamePrefix": ".csv",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": true
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_1mg",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_1mg",
+								"type": "DatasetReference",
+								"parameters": {
+									"cw_fileName": "@{formatDateTime(pipeline().parameters.windowStart,'dd')}",
+									"cw_folderPath": "BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_1mg')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
 			]
 		},
 		{
@@ -453,6 +667,41 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
 				"[concat(variables('factoryId'), '/datasets/blobcsv')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trigger_1mg')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "BatchIngestBeer",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"windowStart": {
+								"type": "Expression",
+								"value": "[parameters('Trigger_1mg_properties_BatchIngestBeer_parameters_windowStart')]"
+							}
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Week",
+						"interval": 1,
+						"startTime": "2021-10-17T09:10:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer')]"
 			]
 		}
 	]

@@ -20,6 +20,9 @@
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://beerstorage123.dfs.core.windows.net"
 		},
+		"Trigger_1mg_properties_BatchIngestBeer_parameters_windowStart": {
+			"value": "@trigger().scheduledTime"
+		},
 		"containerUri": {
 			"value": ""
 		},
