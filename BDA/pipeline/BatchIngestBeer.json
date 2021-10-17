@@ -37,13 +37,148 @@
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
 							"maxRowsPerFile": 10000000,
-							"fileNamePrefix": ".csv",
+							"fileNamePrefix": "BeerReview/{Year}/{Month}/{Date}",
 							"quoteAllText": true,
-							"fileExtension": ".txt"
+							"fileExtension": ".csv"
 						}
 					},
 					"enableStaging": false,
-					"validateDataConsistency": true
+					"validateDataConsistency": true,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "beer_ABV",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "beer_ABV",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "beer_beerId",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "beer_beerId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "beer_brewerId",
+									"type": "Int16"
+								},
+								"sink": {
+									"name": "beer_brewerId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "beer_name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "beer_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "beer_style",
+									"type": "String"
+								},
+								"sink": {
+									"name": "beer_style",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_appearance",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "review_appearance",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_palette",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "review_palette",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_overall",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "review_overall",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_taste",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "review_taste",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_profileName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "review_profileName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_aroma",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "review_aroma",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_time",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "review_time",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "review_text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "review_text",
+									"type": "String"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
