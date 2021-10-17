@@ -36,8 +36,6 @@
 						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
-							"maxRowsPerFile": 10000000,
-							"fileNamePrefix": "BeerReview/{Year}/{Month}/{Date}",
 							"quoteAllText": true,
 							"fileExtension": ".csv"
 						}
