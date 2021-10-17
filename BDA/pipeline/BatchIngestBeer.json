@@ -54,7 +54,7 @@
 								},
 								"sink": {
 									"name": "beer_ABV",
-									"type": "String"
+									"type": "Double"
 								}
 							},
 							{
@@ -64,7 +64,7 @@
 								},
 								"sink": {
 									"name": "beer_beerId",
-									"type": "String"
+									"type": "Int32"
 								}
 							},
 							{
@@ -74,7 +74,7 @@
 								},
 								"sink": {
 									"name": "beer_brewerId",
-									"type": "String"
+									"type": "Int16"
 								}
 							},
 							{
@@ -104,7 +104,7 @@
 								},
 								"sink": {
 									"name": "review_appearance",
-									"type": "String"
+									"type": "Double"
 								}
 							},
 							{
@@ -114,7 +114,7 @@
 								},
 								"sink": {
 									"name": "review_palette",
-									"type": "String"
+									"type": "Double"
 								}
 							},
 							{
@@ -124,7 +124,7 @@
 								},
 								"sink": {
 									"name": "review_overall",
-									"type": "String"
+									"type": "Double"
 								}
 							},
 							{
@@ -134,7 +134,7 @@
 								},
 								"sink": {
 									"name": "review_taste",
-									"type": "String"
+									"type": "Double"
 								}
 							},
 							{
@@ -154,7 +154,7 @@
 								},
 								"sink": {
 									"name": "review_aroma",
-									"type": "String"
+									"type": "Double"
 								}
 							},
 							{
@@ -164,7 +164,7 @@
 								},
 								"sink": {
 									"name": "review_time",
-									"type": "String"
+									"type": "Int32"
 								}
 							},
 							{
