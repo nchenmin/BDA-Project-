@@ -213,7 +213,7 @@
 						"type": "AzureBlobStorageLocation",
 						"container": "beercontainer"
 					},
-					"columnDelimiter": "|",
+					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -252,7 +252,7 @@
 								"type": "DelimitedTextSink",
 								"storeSettings": {
 									"type": "AzureBlobStorageWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
+									"copyBehavior": "FlattenHierarchy"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
@@ -261,7 +261,6 @@
 								}
 							},
 							"enableStaging": false,
-							"validateDataConsistency": true,
 							"translator": {
 								"type": "TabularTranslator",
 								"mappings": [
@@ -424,7 +423,7 @@
 								],
 								"typeConversion": true,
 								"typeConversionSettings": {
-									"allowDataTruncation": false,
+									"allowDataTruncation": true,
 									"treatBooleanAsNumber": false
 								}
 							}
