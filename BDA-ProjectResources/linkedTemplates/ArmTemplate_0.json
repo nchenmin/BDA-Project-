@@ -215,6 +215,7 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": []
@@ -250,7 +251,8 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
@@ -261,9 +263,167 @@
 							"enableStaging": false,
 							"translator": {
 								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "beer_ABV",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "beer_ABV",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_beerId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "beer_beerId",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_brewerId",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "beer_brewerId",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_name",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "beer_name",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_style",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "beer_style",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_appearance",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "review_appearance",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_palette",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "review_palette",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_overall",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "review_overall",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_taste",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "review_taste",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_profileName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "review_profileName",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_aroma",
+											"type": "Double",
+											"physicalType": "float"
+										},
+										"sink": {
+											"name": "review_aroma",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_text",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "review_text",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_time",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "review_time",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
 								"typeConversion": true,
 								"typeConversionSettings": {
-									"allowDataTruncation": true,
+									"allowDataTruncation": false,
 									"treatBooleanAsNumber": false
 								}
 							}
