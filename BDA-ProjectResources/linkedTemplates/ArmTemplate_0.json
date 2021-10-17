@@ -213,7 +213,7 @@
 						"type": "AzureBlobStorageLocation",
 						"container": "beercontainer"
 					},
-					"columnDelimiter": ",",
+					"columnDelimiter": "\u0001",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -261,6 +261,7 @@
 								}
 							},
 							"enableStaging": false,
+							"validateDataConsistency": true,
 							"translator": {
 								"type": "TabularTranslator",
 								"mappings": [
