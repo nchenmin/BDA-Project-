@@ -54,11 +54,7 @@
 				"outputs": [
 					{
 						"referenceName": "DestinationDataset_1mg",
-						"type": "DatasetReference",
-						"parameters": {
-							"cw_fileName": "@{formatDateTime(pipeline().parameters.windowStart,'dd')}",
-							"cw_folderPath": "BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}"
-						}
+						"type": "DatasetReference"
 					}
 				]
 			}

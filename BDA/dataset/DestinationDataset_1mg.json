@@ -5,27 +5,11 @@
 			"referenceName": "Link to blob storage",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"cw_fileName": {
-				"type": "String"
-			},
-			"cw_folderPath": {
-				"type": "String"
-			}
-		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().cw_fileName",
-					"type": "Expression"
-				},
-				"folderPath": {
-					"value": "@dataset().cw_folderPath",
-					"type": "Expression"
-				},
 				"container": "beercontainer"
 			},
 			"columnDelimiter": ",",
