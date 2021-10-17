@@ -1,0 +1,221 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "BDA-ProjectResources"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BatchIngestBeer')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Batch Ingestion Beer Review DataBase",
+				"activities": [
+					{
+						"name": "Copy_1mg",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "dbo.BeerProject"
+							},
+							{
+								"name": "Destination",
+								"value": "beercontainer/BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": true,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "beer_ABV",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "beer_ABV",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_beerId",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "beer_beerId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_brewerId",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "beer_brewerId",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "beer_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_style",
+											"type": "String"
+										},
+										"sink": {
+											"name": "beer_style",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_appearance",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_appearance",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_palette",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_palette",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_overall",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_overall",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_taste",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_taste",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_profileName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "review_profileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_aroma",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_aroma",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_time",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "review_time",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "review_text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "review_text",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_1mg",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_1mg",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}

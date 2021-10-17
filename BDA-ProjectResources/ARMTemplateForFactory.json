@@ -76,8 +76,6 @@
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
-									"maxRowsPerFile": 10000000,
-									"fileNamePrefix": "BeerReview/{Year}/{Month}/{Date}",
 									"quoteAllText": true,
 									"fileExtension": ".csv"
 								}
@@ -751,8 +749,7 @@
 						"frequency": "Week",
 						"interval": 1,
 						"startTime": "2021-10-17T09:10:00Z",
-						"timeZone": "UTC",
-						"schedule": {}
+						"timeZone": "UTC"
 					}
 				}
 			},
