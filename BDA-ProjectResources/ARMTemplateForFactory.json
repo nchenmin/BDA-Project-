@@ -206,24 +206,24 @@
 									},
 									{
 										"source": {
-											"name": "review_text",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "review_text",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
 											"name": "review_time",
 											"type": "Int32",
 											"physicalType": "int"
 										},
 										"sink": {
 											"name": "review_time",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_text",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "review_text",
 											"type": "String",
 											"physicalType": "String"
 										}
