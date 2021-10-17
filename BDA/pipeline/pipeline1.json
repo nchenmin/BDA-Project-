@@ -33,6 +33,7 @@
 						}
 					},
 					"enableStaging": false,
+					"validateDataConsistency": true,
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
