@@ -1,0 +1,23 @@
+{
+	"name": "BeerProcessedCSVBlob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link to blob storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "Beer Processed",
+				"container": "beercontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
