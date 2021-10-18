@@ -196,6 +196,87 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/BlobstorageCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Link to blob storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "dbo.BeerProject.csv",
+						"container": "beercontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "beer_ABV",
+						"type": "String"
+					},
+					{
+						"name": "beer_beerId",
+						"type": "String"
+					},
+					{
+						"name": "beer_brewerId",
+						"type": "String"
+					},
+					{
+						"name": "beer_name",
+						"type": "String"
+					},
+					{
+						"name": "beer_style",
+						"type": "String"
+					},
+					{
+						"name": "review_appearance",
+						"type": "String"
+					},
+					{
+						"name": "review_palette",
+						"type": "String"
+					},
+					{
+						"name": "review_overall",
+						"type": "String"
+					},
+					{
+						"name": "review_taste",
+						"type": "String"
+					},
+					{
+						"name": "review_profileName",
+						"type": "String"
+					},
+					{
+						"name": "review_aroma",
+						"type": "String"
+					},
+					{
+						"name": "review_time",
+						"type": "String"
+					},
+					{
+						"name": "review_text",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DestinationDataset_1mg')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -353,301 +434,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobstorageCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Link to blob storage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dbo.BeerProject.csv",
-						"container": "beercontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "beer_ABV",
-						"type": "String"
-					},
-					{
-						"name": "beer_beerId",
-						"type": "String"
-					},
-					{
-						"name": "beer_brewerId",
-						"type": "String"
-					},
-					{
-						"name": "beer_name",
-						"type": "String"
-					},
-					{
-						"name": "beer_style",
-						"type": "String"
-					},
-					{
-						"name": "review_appearance",
-						"type": "String"
-					},
-					{
-						"name": "review_palette",
-						"type": "String"
-					},
-					{
-						"name": "review_overall",
-						"type": "String"
-					},
-					{
-						"name": "review_taste",
-						"type": "String"
-					},
-					{
-						"name": "review_profileName",
-						"type": "String"
-					},
-					{
-						"name": "review_aroma",
-						"type": "String"
-					},
-					{
-						"name": "review_time",
-						"type": "String"
-					},
-					{
-						"name": "review_text",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BatchIngestBeer')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Batch Ingestion Beer Review DataBase",
-				"activities": [
-					{
-						"name": "Copy_1mg",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "dbo.BeerProject"
-							},
-							{
-								"name": "Destination",
-								"value": "beercontainer/BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"validateDataConsistency": true,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "beer_ABV",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "beer_ABV",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "beer_beerId",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "beer_beerId",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "beer_brewerId",
-											"type": "Int16"
-										},
-										"sink": {
-											"name": "beer_brewerId",
-											"type": "Int16"
-										}
-									},
-									{
-										"source": {
-											"name": "beer_name",
-											"type": "String"
-										},
-										"sink": {
-											"name": "beer_name",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "beer_style",
-											"type": "String"
-										},
-										"sink": {
-											"name": "beer_style",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "review_appearance",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "review_appearance",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "review_palette",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "review_palette",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "review_overall",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "review_overall",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "review_taste",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "review_taste",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "review_profileName",
-											"type": "String"
-										},
-										"sink": {
-											"name": "review_profileName",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "review_aroma",
-											"type": "Double"
-										},
-										"sink": {
-											"name": "review_aroma",
-											"type": "Double"
-										}
-									},
-									{
-										"source": {
-											"name": "review_time",
-											"type": "Int32"
-										},
-										"sink": {
-											"name": "review_time",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "review_text",
-											"type": "String"
-										},
-										"sink": {
-											"name": "review_text",
-											"type": "String"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_1mg",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_1mg",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"windowStart": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_1mg')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
 			]
 		},
 		{
@@ -917,6 +703,258 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
 				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BatchIngestBeer')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Batch Ingestion Beer Review DataBase",
+				"activities": [
+					{
+						"name": "Copy_1mg",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "dbo.BeerProject"
+							},
+							{
+								"name": "Destination",
+								"value": "beercontainer/BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": true,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "beer_ABV",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "beer_ABV",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_beerId",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "beer_beerId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_brewerId",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "beer_brewerId",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "beer_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_style",
+											"type": "String"
+										},
+										"sink": {
+											"name": "beer_style",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_appearance",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_appearance",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_palette",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_palette",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_overall",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_overall",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_taste",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_taste",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_profileName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "review_profileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_aroma",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_aroma",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_time",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "review_time",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "review_text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "review_text",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_1mg",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_1mg",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "dataflow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy_1mg",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"ReducedcolumnbeerDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_1mg')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
 			]
 		},
 		{

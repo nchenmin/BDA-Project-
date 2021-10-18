@@ -236,6 +236,43 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "dataflow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy_1mg",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"ReducedcolumnbeerDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -251,7 +288,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset_1mg')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
 			]
 		},
 		{
@@ -507,6 +545,87 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/SQL Beer Review DB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BlobstorageCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Link to blob storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "dbo.BeerProject.csv",
+						"container": "beercontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "beer_ABV",
+						"type": "String"
+					},
+					{
+						"name": "beer_beerId",
+						"type": "String"
+					},
+					{
+						"name": "beer_brewerId",
+						"type": "String"
+					},
+					{
+						"name": "beer_name",
+						"type": "String"
+					},
+					{
+						"name": "beer_style",
+						"type": "String"
+					},
+					{
+						"name": "review_appearance",
+						"type": "String"
+					},
+					{
+						"name": "review_palette",
+						"type": "String"
+					},
+					{
+						"name": "review_overall",
+						"type": "String"
+					},
+					{
+						"name": "review_taste",
+						"type": "String"
+					},
+					{
+						"name": "review_profileName",
+						"type": "String"
+					},
+					{
+						"name": "review_aroma",
+						"type": "String"
+					},
+					{
+						"name": "review_time",
+						"type": "String"
+					},
+					{
+						"name": "review_text",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
 			]
 		},
 		{
@@ -871,87 +990,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
 				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobstorageCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Link to blob storage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dbo.BeerProject.csv",
-						"container": "beercontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "beer_ABV",
-						"type": "String"
-					},
-					{
-						"name": "beer_beerId",
-						"type": "String"
-					},
-					{
-						"name": "beer_brewerId",
-						"type": "String"
-					},
-					{
-						"name": "beer_name",
-						"type": "String"
-					},
-					{
-						"name": "beer_style",
-						"type": "String"
-					},
-					{
-						"name": "review_appearance",
-						"type": "String"
-					},
-					{
-						"name": "review_palette",
-						"type": "String"
-					},
-					{
-						"name": "review_overall",
-						"type": "String"
-					},
-					{
-						"name": "review_taste",
-						"type": "String"
-					},
-					{
-						"name": "review_profileName",
-						"type": "String"
-					},
-					{
-						"name": "review_aroma",
-						"type": "String"
-					},
-					{
-						"name": "review_time",
-						"type": "String"
-					},
-					{
-						"name": "review_text",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
 			]
 		}
 	]
