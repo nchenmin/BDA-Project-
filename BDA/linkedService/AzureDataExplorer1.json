@@ -1,0 +1,11 @@
+{
+	"name": "AzureDataExplorer1",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDataExplorer",
+		"typeProperties": {
+			"endpoint": "https://cartdata.eastasia.kusto.windows.net",
+			"database": "BeerCartData"
+		}
+	}
+}
