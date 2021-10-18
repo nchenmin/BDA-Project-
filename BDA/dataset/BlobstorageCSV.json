@@ -1,0 +1,76 @@
+{
+	"name": "BlobstorageCSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link to blob storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "dbo.BeerProject.csv",
+				"container": "beercontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "beer_ABV",
+				"type": "String"
+			},
+			{
+				"name": "beer_beerId",
+				"type": "String"
+			},
+			{
+				"name": "beer_brewerId",
+				"type": "String"
+			},
+			{
+				"name": "beer_name",
+				"type": "String"
+			},
+			{
+				"name": "beer_style",
+				"type": "String"
+			},
+			{
+				"name": "review_appearance",
+				"type": "String"
+			},
+			{
+				"name": "review_palette",
+				"type": "String"
+			},
+			{
+				"name": "review_overall",
+				"type": "String"
+			},
+			{
+				"name": "review_taste",
+				"type": "String"
+			},
+			{
+				"name": "review_profileName",
+				"type": "String"
+			},
+			{
+				"name": "review_aroma",
+				"type": "String"
+			},
+			{
+				"name": "review_time",
+				"type": "String"
+			},
+			{
+				"name": "review_text",
+				"type": "String"
+			}
+		]
+	}
+}
