@@ -26,15 +26,9 @@
 				],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -187,7 +181,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BeerProcessedCSVBlob",
+						"referenceName": "SourceDataset_1mg",
 						"type": "DatasetReference"
 					}
 				],
