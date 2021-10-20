@@ -911,7 +911,7 @@
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
-						"frequency": "Week",
+						"frequency": "Month",
 						"interval": 1,
 						"startTime": "2021-10-18T12:25:00",
 						"timeZone": "Singapore Standard Time"
