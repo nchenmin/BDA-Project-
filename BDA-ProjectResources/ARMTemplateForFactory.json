@@ -71,6 +71,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
 							"sink": {
@@ -1010,9 +1011,27 @@
 					"transformations": [
 						{
 							"name": "Select1"
+						},
+						{
+							"name": "Aggregate1"
+						},
+						{
+							"name": "Rank1"
+						},
+						{
+							"name": "Join1"
+						},
+						{
+							"name": "Select2"
+						},
+						{
+							"name": "Filter1"
+						},
+						{
+							"name": "AlterRow1"
 						}
 					],
-					"script": "source(output(\n\t\tbeer_ABV as double,\n\t\tbeer_beerId as integer,\n\t\tbeer_brewerId as integer,\n\t\tbeer_name as string,\n\t\tbeer_style as string,\n\t\treview_appearance as double,\n\t\treview_palette as double,\n\t\treview_overall as double,\n\t\treview_taste as double,\n\t\treview_profileName as string,\n\t\treview_aroma as double,\n\t\treview_time as integer,\n\t\treview_text as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource1 select(mapColumn(\n\t\tbeer_beerId,\n\t\tbeer_brewerId,\n\t\tbeer_name,\n\t\tbeer_style,\n\t\treview_appearance,\n\t\treview_palette,\n\t\treview_overall,\n\t\treview_taste,\n\t\treview_profileName,\n\t\treview_aroma\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tfilePattern:'BeerCleaned[n].csv',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tpartitionBy('hash', 1)) ~> ReducedcolumnbeerDB"
+					"script": "source(output(\n\t\tbeer_ABV as double,\n\t\tbeer_beerId as integer,\n\t\tbeer_brewerId as integer,\n\t\tbeer_name as string,\n\t\tbeer_style as string,\n\t\treview_appearance as double,\n\t\treview_palette as double,\n\t\treview_overall as double,\n\t\treview_taste as double,\n\t\treview_profileName as string,\n\t\treview_aroma as double,\n\t\treview_time as integer,\n\t\treview_text as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nAlterRow1 select(mapColumn(\n\t\tbeer_beerId,\n\t\tbeer_name,\n\t\treview_overall,\n\t\treview_profileName\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 aggregate(groupBy(beer_beerId),\n\tBeerId_count = count()) ~> Aggregate1\nAggregate1 rank(desc(BeerId_count, true),\n\toutput(BeerID_Rank as long),\n\tdense: true) ~> Rank1\nSelect1, Rank1 join(Select1@beer_beerId == Aggregate1@beer_beerId,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 select(mapColumn(\n\t\tbeer_name,\n\t\treview_overall,\n\t\treview_profileName,\n\t\tbeer_beerId = Aggregate1@beer_beerId,\n\t\tBeerId_count,\n\t\tBeerID_Rank\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 filter(BeerID_Rank<100) ~> Filter1\nsource1 alterRow(deleteIf(isNull(review_profileName)==true())) ~> AlterRow1\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tfilePattern:'BeerCleaned[n].csv',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tpartitionBy('hash', 1)) ~> ReducedcolumnbeerDB"
 				}
 			},
 			"dependsOn": [
