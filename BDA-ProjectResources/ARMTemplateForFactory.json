@@ -31,6 +31,10 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-Beer.vault.azure.net/"
 		},
+		"ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)": {
+			"type": "string",
+			"defaultValue": "@trigger().scheduledTime"
+		},
 		"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
@@ -232,7 +236,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DestinationDataset_1mg",
+								"referenceName": "DestinationDataset_1mg_copy1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -289,7 +293,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset_1mg')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg_copy1')]",
 				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
 			]
 		},
@@ -372,11 +376,69 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"parameters": {
+					"Trigger (MM/DD/YY)": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Batch Ingestion Data Flow')]",
 				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BatchIngestPipeline_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Batch Ingestion Data Flow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Batch Ingestion Data Flow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"Trigger (MM/DD/YY)": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Batch Ingestion Data Flow')]"
 			]
 		},
 		{
@@ -528,6 +590,33 @@
 						"type": "AzureBlobStorageLocation",
 						"container": "beercontainer"
 					},
+					"columnDelimiter": "",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_1mg_copy1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Link to blob storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "beercontainer"
+					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
@@ -638,7 +727,7 @@
 						"type": "AzureBlobStorageLocation",
 						"container": "beercontainer"
 					},
-					"columnDelimiter": ",",
+					"columnDelimiter": "",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -770,6 +859,42 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ScheduleTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "BatchIngestPipeline",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"Trigger (MM/DD/YY)": {
+								"type": "Expression",
+								"value": "[parameters('ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)')]"
+							}
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Month",
+						"interval": 1,
+						"startTime": "2021-10-22T09:00:00",
+						"endTime": "2021-12-01T09:00:00",
+						"timeZone": "Singapore Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Trigger_1mg')]",
@@ -967,38 +1092,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
 				"[concat(variables('factoryId'), '/datasets/BeerProcessedCSVBlob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ScheduleTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "BatchIngestPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Month",
-						"interval": 1,
-						"startTime": "2021-10-22T09:00:00",
-						"endTime": "2021-12-01T09:00:00",
-						"timeZone": "Singapore Standard Time",
-						"schedule": {}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
 			]
 		}
 	]

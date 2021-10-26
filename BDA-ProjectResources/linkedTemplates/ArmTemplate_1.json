@@ -6,12 +6,71 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "BDA-ProjectResources"
+		},
+		"ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)": {
+			"type": "string",
+			"defaultValue": "@trigger().scheduledTime"
+		},
+		"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
+			"type": "string",
+			"defaultValue": "@trigger().scheduledTime"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BatchIngestPipeline_copy1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Batch Ingestion Data Flow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Batch Ingestion Data Flow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"Trigger (MM/DD/YY)": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ScheduleTrigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
@@ -25,7 +84,12 @@
 							"referenceName": "BatchIngestPipeline",
 							"type": "PipelineReference"
 						},
-						"parameters": {}
+						"parameters": {
+							"Trigger (MM/DD/YY)": {
+								"type": "Expression",
+								"value": "[parameters('ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)')]"
+							}
+						}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -35,8 +99,40 @@
 						"interval": 1,
 						"startTime": "2021-10-22T09:00:00",
 						"endTime": "2021-12-01T09:00:00",
-						"timeZone": "Singapore Standard Time",
-						"schedule": {}
+						"timeZone": "Singapore Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trigger_1mg')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "BatchIngestBeer - OLD",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"windowStart": {
+								"type": "Expression",
+								"value": "[parameters('Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart')]"
+							}
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Month",
+						"interval": 1,
+						"startTime": "2021-10-18T12:25:00",
+						"timeZone": "Singapore Standard Time"
 					}
 				}
 			},
