@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "BatchIngestPipeline",
+					"referenceName": "Testing2",
 					"type": "PipelineReference"
 				}
 			}
