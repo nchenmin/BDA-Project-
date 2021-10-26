@@ -372,11 +372,6 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"parameters": {
-					"Date MM/DD/YY": {
-						"type": "string"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -795,13 +790,6 @@
 								"value": "[parameters('Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart')]"
 							}
 						}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "BatchIngestPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -815,8 +803,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer - OLD')]",
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer - OLD')]"
 			]
 		},
 		{
@@ -980,6 +967,38 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
 				"[concat(variables('factoryId'), '/datasets/BeerProcessedCSVBlob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ScheduleTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "BatchIngestPipeline",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Month",
+						"interval": 1,
+						"startTime": "2021-10-22T09:00:00",
+						"endTime": "2021-12-01T09:00:00",
+						"timeZone": "Singapore Standard Time",
+						"schedule": {}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
 			]
 		}
 	]

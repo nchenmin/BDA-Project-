@@ -927,11 +927,6 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"parameters": {
-					"Date MM/DD/YY": {
-						"type": "string"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -958,13 +953,6 @@
 								"value": "[parameters('Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart')]"
 							}
 						}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "BatchIngestPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -978,8 +966,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer - OLD')]",
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer - OLD')]"
 			]
 		}
 	]
