@@ -1,0 +1,378 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "BDA-ProjectResources"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BatchIngestBeer - OLD')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Batch Ingestion Beer Review DataBase",
+				"activities": [
+					{
+						"name": "Copy_1mg",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "dbo.BeerProject"
+							},
+							{
+								"name": "Destination",
+								"value": "beercontainer/BeerReview/@{formatDateTime(pipeline().parameters.windowStart,'yy')}/@{formatDateTime(pipeline().parameters.windowStart,'MM')}/@{formatDateTime(pipeline().parameters.windowStart,'dd')}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": true,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "beer_ABV",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "beer_ABV",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_beerId",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "beer_beerId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_brewerId",
+											"type": "Int16"
+										},
+										"sink": {
+											"name": "beer_brewerId",
+											"type": "Int16"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "beer_name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "beer_style",
+											"type": "String"
+										},
+										"sink": {
+											"name": "beer_style",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_appearance",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_appearance",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_palette",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_palette",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_overall",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_overall",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_taste",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_taste",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_profileName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "review_profileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "review_aroma",
+											"type": "Double"
+										},
+										"sink": {
+											"name": "review_aroma",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "review_time",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "review_time",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "review_text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "review_text",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_1mg",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_1mg",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "dataflow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy_1mg",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_1mg')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Link to blob storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "beercontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TextBeerReview')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Link to blob storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "beercontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "beername",
+						"type": "String"
+					},
+					{
+						"name": "rating",
+						"type": "String"
+					},
+					{
+						"name": "user",
+						"type": "String"
+					},
+					{
+						"name": "beer_beerId",
+						"type": "String"
+					},
+					{
+						"name": "BeerId_count",
+						"type": "String"
+					},
+					{
+						"name": "BeerID_Rank",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Batch Ingestion Data Flow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "SourceDataset_1mg",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "TextBeerReview",
+								"type": "DatasetReference"
+							},
+							"name": "TextBeerData"
+						},
+						{
+							"dataset": {
+								"referenceName": "DestinationDataset_1mg",
+								"type": "DatasetReference"
+							},
+							"name": "FullBeerData"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Select1"
+						},
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "source(output(\n\t\tbeer_ABV as double,\n\t\tbeer_beerId as integer,\n\t\tbeer_brewerId as integer,\n\t\tbeer_name as string,\n\t\tbeer_style as string,\n\t\treview_appearance as double,\n\t\treview_palette as double,\n\t\treview_overall as double,\n\t\treview_taste as double,\n\t\treview_profileName as string,\n\t\treview_aroma as double,\n\t\treview_time as integer,\n\t\treview_text as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nDerivedColumn1 select(mapColumn(\n\t\treview_overall,\n\t\treview_profileName,\n\t\treview_text\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nsource1 derive(review_text = replace(review_text, \",\", \"\")) ~> DerivedColumn1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tbeername as string,\n\t\trating as string,\n\t\tuser as string,\n\t\tbeer_beerId as string,\n\t\tBeerId_count as string,\n\t\tBeerID_Rank as string\n\t),\n\tfilePattern:'TextBeerProject.csv',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> TextBeerData\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tfilePattern:'dbo.BeerProject.csv',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> FullBeerData"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/TextBeerReview')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_1mg')]"
+			]
+		}
+	]
+}
