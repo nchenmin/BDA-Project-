@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "BatchIngestPipeline",
 	"properties": {
 		"activities": [
 			{
@@ -58,6 +58,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"Date MM/DD/YY": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }

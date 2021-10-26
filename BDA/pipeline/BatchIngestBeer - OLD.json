@@ -1,5 +1,5 @@
 {
-	"name": "BatchIngestBeer",
+	"name": "BatchIngestBeer - OLD",
 	"properties": {
 		"description": "Batch Ingestion Beer Review DataBase",
 		"activities": [
