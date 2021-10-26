@@ -1,5 +1,5 @@
 {
-	"name": "DestinationDataset_1mg",
+	"name": "FullBeerProjectcsv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Link to blob storage",

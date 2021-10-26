@@ -181,13 +181,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_1mg",
+						"referenceName": "SourceSQLBeerProject",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_1mg",
+						"referenceName": "FullBeerProjectcsv",
 						"type": "DatasetReference"
 					}
 				]
@@ -213,7 +213,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
+						"referenceName": "Data Processing Data Flow",
 						"type": "DataFlowReference"
 					},
 					"compute": {

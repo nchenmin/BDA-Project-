@@ -1,5 +1,5 @@
 {
-	"name": "SourceDataset_1mg",
+	"name": "SourceSQLBeerProject",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "SQL Beer Review DB",

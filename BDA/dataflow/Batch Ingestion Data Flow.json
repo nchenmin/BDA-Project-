@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "SourceDataset_1mg",
+						"referenceName": "SourceSQLBeerProject",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -22,7 +22,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "DestinationDataset_1mg",
+						"referenceName": "FullBeerProjectcsv",
 						"type": "DatasetReference"
 					},
 					"name": "FullBeerData"
