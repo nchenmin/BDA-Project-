@@ -7,7 +7,7 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "BDA-ProjectResources"
 		},
-		"ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)": {
+		"ScheduleTrigger_properties_BatchIngestPipeline_copy1_parameters_Trigger (MM/DD/YY)": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		},
@@ -81,13 +81,13 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "BatchIngestPipeline",
+							"referenceName": "BatchIngestPipeline_copy1",
 							"type": "PipelineReference"
 						},
 						"parameters": {
 							"Trigger (MM/DD/YY)": {
 								"type": "Expression",
-								"value": "[parameters('ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)')]"
+								"value": "[parameters('ScheduleTrigger_properties_BatchIngestPipeline_copy1_parameters_Trigger (MM/DD/YY)')]"
 							}
 						}
 					}
@@ -99,11 +99,14 @@
 						"interval": 1,
 						"startTime": "2021-10-22T09:00:00",
 						"endTime": "2021-12-01T09:00:00",
-						"timeZone": "Singapore Standard Time"
+						"timeZone": "Singapore Standard Time",
+						"schedule": {}
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline_copy1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Trigger_1mg')]",

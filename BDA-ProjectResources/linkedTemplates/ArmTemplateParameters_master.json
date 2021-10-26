@@ -23,7 +23,7 @@
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://KeyVault-Beer.vault.azure.net/"
 		},
-		"ScheduleTrigger_properties_BatchIngestPipeline_parameters_Trigger (MM/DD/YY)": {
+		"ScheduleTrigger_properties_BatchIngestPipeline_copy1_parameters_Trigger (MM/DD/YY)": {
 			"value": "@trigger().scheduledTime"
 		},
 		"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
