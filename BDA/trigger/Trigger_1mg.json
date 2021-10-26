@@ -15,6 +15,18 @@
 						"value": "@trigger().scheduledTime"
 					}
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "BatchIngestBeer - OLD_copy1",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"windowStart": {
+						"type": "Expression",
+						"value": "@trigger().scheduledTime"
+					}
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
