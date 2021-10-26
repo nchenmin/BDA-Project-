@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "BatchIngestBeer - OLD",
+					"referenceName": "OLD",
 					"type": "PipelineReference"
 				},
 				"parameters": {
