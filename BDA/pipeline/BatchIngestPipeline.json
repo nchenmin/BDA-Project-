@@ -58,11 +58,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"Date MM/DD/YY": {
-				"type": "string"
-			}
-		},
 		"annotations": []
 	}
 }
