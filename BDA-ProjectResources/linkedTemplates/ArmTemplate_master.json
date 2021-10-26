@@ -31,7 +31,7 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-Beer.vault.azure.net/"
 		},
-		"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
+		"Trigger_1mg_properties_OLD_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		},
@@ -83,36 +83,16 @@
 					},
 					"AzureKeyVault1_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "BDA-ProjectResources_ArmTemplate_1",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
 					},
-					"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
-						"value": "[parameters('Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart')]"
+					"Trigger_1mg_properties_OLD_parameters_windowStart": {
+						"value": "[parameters('Trigger_1mg_properties_OLD_parameters_windowStart')]"
 					},
 					"Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart": {
 						"value": "[parameters('Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart')]"
 					}
 				}
 			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'BDA-ProjectResources_ArmTemplate_0')]"
-			]
+			"dependsOn": []
 		}
 	]
 }

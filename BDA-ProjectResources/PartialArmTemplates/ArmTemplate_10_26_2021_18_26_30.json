@@ -6,38 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "BDA-ProjectResources"
-		},
-		"AzureDataLakeStorage1_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
-		},
-		"AzureSqlDatabase1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
-		},
-		"Link to blob storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Link to blob storage'"
-		},
-		"SQL Beer Review DB_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SQL Beer Review DB'"
-		},
-		"AzureDataLakeStorage1_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://beerstorage123.dfs.core.windows.net"
-		},
-		"AzureKeyVault1_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://KeyVault-Beer.vault.azure.net/"
-		},
-		"Trigger_1mg_properties_OLD_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
-		},
-		"Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
 		}
 	},
 	"variables": {
@@ -66,15 +34,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "Batch Ingestion Data Flow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"TextBeerData": {},
-									"FullBeerData": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -104,14 +65,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "Data Processing Data Flow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"ReducedcolumnbeerDB": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -120,10 +75,6 @@
 						}
 					}
 				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
 				"parameters": {
 					"windowStart": {
 						"type": "String"
@@ -322,15 +273,13 @@
 						"inputs": [
 							{
 								"referenceName": "SourceSQLBeerProject",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "FullBeerProjectcsv",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -356,14 +305,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "Data Processing Data Flow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"ReducedcolumnbeerDB": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -372,10 +315,6 @@
 						}
 					}
 				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
 				"parameters": {
 					"windowStart": {
 						"type": "String"
@@ -387,115 +326,6 @@
 				"[concat(variables('factoryId'), '/datasets/SourceSQLBeerProject')]",
 				"[concat(variables('factoryId'), '/datasets/FullBeerProjectcsv')]",
 				"[concat(variables('factoryId'), '/dataflows/Data Processing Data Flow')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BeerProcessedCSVBlob')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Link to blob storage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "Beer Processed",
-						"container": "beercontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobstorageCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Link to blob storage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "dbo.BeerProject.csv",
-						"container": "beercontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "beer_ABV",
-						"type": "String"
-					},
-					{
-						"name": "beer_beerId",
-						"type": "String"
-					},
-					{
-						"name": "beer_brewerId",
-						"type": "String"
-					},
-					{
-						"name": "beer_name",
-						"type": "String"
-					},
-					{
-						"name": "beer_style",
-						"type": "String"
-					},
-					{
-						"name": "review_appearance",
-						"type": "String"
-					},
-					{
-						"name": "review_palette",
-						"type": "String"
-					},
-					{
-						"name": "review_overall",
-						"type": "String"
-					},
-					{
-						"name": "review_taste",
-						"type": "String"
-					},
-					{
-						"name": "review_profileName",
-						"type": "String"
-					},
-					{
-						"name": "review_aroma",
-						"type": "String"
-					},
-					{
-						"name": "review_time",
-						"type": "String"
-					},
-					{
-						"name": "review_text",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
 			]
 		},
 		{
@@ -521,9 +351,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SourceSQLBeerProject')]",
@@ -604,130 +432,6 @@
 					"table": "BeerProject"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQL Beer Review DB')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TextBeerReview')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Link to blob storage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "beercontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "beername",
-						"type": "String"
-					},
-					{
-						"name": "rating",
-						"type": "String"
-					},
-					{
-						"name": "user",
-						"type": "String"
-					},
-					{
-						"name": "beer_beerId",
-						"type": "String"
-					},
-					{
-						"name": "BeerId_count",
-						"type": "String"
-					},
-					{
-						"name": "BeerID_Rank",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Link to blob storage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Link to blob storage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('Link to blob storage_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQL Beer Review DB')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Link from SQL Beer Review Database Server",
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('SQL Beer Review DB_connectionString')]"
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -746,7 +450,7 @@
 						"parameters": {
 							"windowStart": {
 								"type": "Expression",
-								"value": "[parameters('Trigger_1mg_properties_OLD_parameters_windowStart')]"
+								"value": "@trigger().scheduledTime"
 							}
 						}
 					},
@@ -758,7 +462,7 @@
 						"parameters": {
 							"windowStart": {
 								"type": "Expression",
-								"value": "[parameters('Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart')]"
+								"value": "@trigger().scheduledTime"
 							}
 						}
 					}
@@ -777,67 +481,6 @@
 				"[concat(variables('factoryId'), '/pipelines/OLD')]",
 				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trigger_y90')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Week",
-						"interval": 1,
-						"startTime": "2021-10-17T00:27:00",
-						"timeZone": "Singapore Standard Time",
-						"schedule": {
-							"weekDays": [
-								"Saturday",
-								"Friday",
-								"Wednesday",
-								"Thursday",
-								"Tuesday",
-								"Monday",
-								"Sunday"
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "East Asia",
-						"dataFlowProperties": {
-							"computeType": "General",
-							"coreCount": 8,
-							"timeToLive": 10,
-							"cleanup": false
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntime2')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Batch Ingestion Data Flow')]",
@@ -884,7 +527,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceSQLBeerProject')]",
-				"[concat(variables('factoryId'), '/datasets/TextBeerReview')]",
 				"[concat(variables('factoryId'), '/datasets/FullBeerProjectcsv')]"
 			]
 		},
@@ -939,10 +581,7 @@
 					"script": "source(output(\n\t\tbeer_ABV as double,\n\t\tbeer_beerId as integer,\n\t\tbeer_brewerId as integer,\n\t\tbeer_name as string,\n\t\tbeer_style as string,\n\t\treview_appearance as double,\n\t\treview_palette as double,\n\t\treview_overall as double,\n\t\treview_taste as double,\n\t\treview_profileName as string,\n\t\treview_aroma as double,\n\t\treview_time as integer,\n\t\treview_text as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource1 select(mapColumn(\n\t\tbeer_beerId,\n\t\tbeer_name,\n\t\treview_overall,\n\t\treview_profileName\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 aggregate(groupBy(beer_beerId),\n\tBeerId_count = count()) ~> Aggregate1\nAggregate1 rank(desc(BeerId_count, true),\n\toutput(BeerID_Rank as long),\n\tdense: true) ~> Rank1\nSelect1, Rank1 join(Select1@beer_beerId == Aggregate1@beer_beerId,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 select(mapColumn(\n\t\tbeername = beer_name,\n\t\trating = review_overall,\n\t\tuser = review_profileName,\n\t\tbeer_beerId = Aggregate1@beer_beerId,\n\t\tBeerId_count,\n\t\tBeerID_Rank\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 filter(BeerID_Rank<100) ~> Filter1\nFilter1 sort(asc(BeerID_Rank, true)) ~> Sort1\nSort1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tfilePattern:'BeerCleaned[n].csv',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tpartitionBy('hash', 1)) ~> ReducedcolumnbeerDB"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
-				"[concat(variables('factoryId'), '/datasets/BeerProcessedCSVBlob')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
