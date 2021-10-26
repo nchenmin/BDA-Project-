@@ -18,7 +18,7 @@
 			},
 			{
 				"pipelineReference": {
-					"referenceName": "BatchIngestBeer - OLD_copy1",
+					"referenceName": "Testing",
 					"type": "PipelineReference"
 				},
 				"parameters": {
