@@ -8,6 +8,12 @@
 				"pipelineReference": {
 					"referenceName": "BatchIngestPipeline",
 					"type": "PipelineReference"
+				},
+				"parameters": {
+					"Trigger (MM/DD/YY)": {
+						"type": "Expression",
+						"value": "@trigger().scheduledTime"
+					}
 				}
 			}
 		],
