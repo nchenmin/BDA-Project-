@@ -1,0 +1,47 @@
+{
+	"name": "TextBeerReview",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Link to blob storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "beercontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "beername",
+				"type": "String"
+			},
+			{
+				"name": "rating",
+				"type": "String"
+			},
+			{
+				"name": "user",
+				"type": "String"
+			},
+			{
+				"name": "beer_beerId",
+				"type": "String"
+			},
+			{
+				"name": "BeerId_count",
+				"type": "String"
+			},
+			{
+				"name": "BeerID_Rank",
+				"type": "String"
+			}
+		]
+	}
+}

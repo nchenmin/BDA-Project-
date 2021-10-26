@@ -3,11 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy Beer Review Data",
-				"type": "Copy",
+				"name": "Batch Ingestion Data Flow",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "7.00:00:00",
+					"timeout": "1.00:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -15,203 +15,47 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+					"dataflow": {
+						"referenceName": "Batch Ingestion Data Flow",
+						"type": "DataFlowReference"
 					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings",
-							"copyBehavior": "FlattenHierarchy"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".csv"
-						}
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"name": "beer_ABV",
-									"type": "Double",
-									"physicalType": "float"
-								},
-								"sink": {
-									"name": "beer_ABV",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "beer_beerId",
-									"type": "Int32",
-									"physicalType": "int"
-								},
-								"sink": {
-									"name": "beer_beerId",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "beer_brewerId",
-									"type": "Int16",
-									"physicalType": "smallint"
-								},
-								"sink": {
-									"name": "beer_brewerId",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "beer_name",
-									"type": "String",
-									"physicalType": "varchar"
-								},
-								"sink": {
-									"name": "beer_name",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "beer_style",
-									"type": "String",
-									"physicalType": "varchar"
-								},
-								"sink": {
-									"name": "beer_style",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_appearance",
-									"type": "Double",
-									"physicalType": "float"
-								},
-								"sink": {
-									"name": "review_appearance",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_palette",
-									"type": "Double",
-									"physicalType": "float"
-								},
-								"sink": {
-									"name": "review_palette",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_overall",
-									"type": "Double",
-									"physicalType": "float"
-								},
-								"sink": {
-									"name": "review_overall",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_taste",
-									"type": "Double",
-									"physicalType": "float"
-								},
-								"sink": {
-									"name": "review_taste",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_profileName",
-									"type": "String",
-									"physicalType": "varchar"
-								},
-								"sink": {
-									"name": "review_profileName",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_aroma",
-									"type": "Double",
-									"physicalType": "float"
-								},
-								"sink": {
-									"name": "review_aroma",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_time",
-									"type": "Int32",
-									"physicalType": "int"
-								},
-								"sink": {
-									"name": "review_time",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "review_text",
-									"type": "String",
-									"physicalType": "varchar"
-								},
-								"sink": {
-									"name": "review_text",
-									"type": "String",
-									"physicalType": "String"
-								}
-							}
-						],
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "dataflow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
 					{
-						"referenceName": "AzureSqlTable1",
-						"type": "DatasetReference"
+						"activity": "Batch Ingestion Data Flow",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
-				"outputs": [
-					{
-						"referenceName": "blobcsv",
-						"type": "DatasetReference"
-					}
-				]
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflow1",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"annotations": []
