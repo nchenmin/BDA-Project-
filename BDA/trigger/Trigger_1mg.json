@@ -15,12 +15,6 @@
 						"value": "@trigger().scheduledTime"
 					}
 				}
-			},
-			{
-				"pipelineReference": {
-					"referenceName": "BatchIngestPipeline",
-					"type": "PipelineReference"
-				}
 			}
 		],
 		"type": "ScheduleTrigger",
