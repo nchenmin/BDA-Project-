@@ -1,0 +1,37 @@
+{
+	"name": "BatchIngestPipeline_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Batch Ingestion Data Flow",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Batch Ingestion Data Flow",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"Trigger (MM/DD/YY)": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}

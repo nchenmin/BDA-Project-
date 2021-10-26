@@ -12,7 +12,7 @@
 				"type": "AzureBlobStorageLocation",
 				"container": "beercontainer"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": "",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
