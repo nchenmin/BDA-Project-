@@ -31,11 +31,11 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-Beer.vault.azure.net/"
 		},
-		"ScheduleTrigger_properties_BatchIngestPipeline_copy1_parameters_Trigger (MM/DD/YY)": {
+		"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		},
-		"Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart": {
+		"Trigger_1mg_properties_Testing_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		}
@@ -376,16 +376,65 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"parameters": {
-					"Trigger (MM/DD/YY)": {
-						"type": "string"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Batch Ingestion Data Flow')]",
 				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Testing')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Batch Ingestion Beer Review DataBase",
+				"activities": [
+					{
+						"name": "Batch Ingestion Data Flow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Batch Ingestion Data Flow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Batch Ingestion Data Flow')]"
 			]
 		},
 		{
@@ -817,15 +866,10 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "BatchIngestPipeline_copy1",
+							"referenceName": "BatchIngestPipeline",
 							"type": "PipelineReference"
 						},
-						"parameters": {
-							"Trigger (MM/DD/YY)": {
-								"type": "Expression",
-								"value": "[parameters('ScheduleTrigger_properties_BatchIngestPipeline_copy1_parameters_Trigger (MM/DD/YY)')]"
-							}
-						}
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -833,15 +877,14 @@
 					"recurrence": {
 						"frequency": "Month",
 						"interval": 1,
-						"startTime": "2021-10-22T09:00:00",
+						"startTime": "2021-10-27T09:00:00",
 						"endTime": "2021-12-01T09:00:00",
-						"timeZone": "Singapore Standard Time",
-						"schedule": {}
+						"timeZone": "Singapore Standard Time"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline_copy1')]"
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
 			]
 		},
 		{
@@ -863,6 +906,18 @@
 								"value": "[parameters('Trigger_1mg_properties_BatchIngestBeer - OLD_parameters_windowStart')]"
 							}
 						}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "Testing",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"windowStart": {
+								"type": "Expression",
+								"value": "[parameters('Trigger_1mg_properties_Testing_parameters_windowStart')]"
+							}
+						}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -876,7 +931,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer - OLD')]"
+				"[concat(variables('factoryId'), '/pipelines/BatchIngestBeer - OLD')]",
+				"[concat(variables('factoryId'), '/pipelines/Testing')]"
 			]
 		},
 		{
@@ -1040,59 +1096,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
 				"[concat(variables('factoryId'), '/datasets/BeerProcessedCSVBlob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BatchIngestPipeline_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Batch Ingestion Data Flow",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "1.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Batch Ingestion Data Flow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"Trigger (MM/DD/YY)": {
-						"type": "string"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/Batch Ingestion Data Flow')]"
 			]
 		}
 	]

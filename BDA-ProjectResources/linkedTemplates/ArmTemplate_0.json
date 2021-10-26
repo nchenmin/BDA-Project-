@@ -950,11 +950,6 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"parameters": {
-					"Trigger (MM/DD/YY)": {
-						"type": "string"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
