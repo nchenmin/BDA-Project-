@@ -213,7 +213,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Data Processing Data Flow",
+						"referenceName": "Data Processing RecommenderModel Data Flow",
 						"type": "DataFlowReference"
 					},
 					"compute": {

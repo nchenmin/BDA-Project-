@@ -1,5 +1,5 @@
 {
-	"name": "Data Processing Data Flow",
+	"name": "Data Processing RecommenderModel Data Flow",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
