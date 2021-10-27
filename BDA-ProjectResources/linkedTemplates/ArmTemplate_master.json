@@ -39,7 +39,7 @@
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		},
-		"Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart": {
+		"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		},
@@ -94,8 +94,8 @@
 					"Trigger_1mg_properties_OLD_parameters_windowStart": {
 						"value": "[parameters('Trigger_1mg_properties_OLD_parameters_windowStart')]"
 					},
-					"Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart": {
-						"value": "[parameters('Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart')]"
+					"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
+						"value": "[parameters('Trigger_1mg_properties_BeerPipeline_parameters_windowStart')]"
 					}
 				}
 			},

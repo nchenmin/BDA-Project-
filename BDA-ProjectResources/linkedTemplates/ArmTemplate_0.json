@@ -39,7 +39,7 @@
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		},
-		"Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart": {
+		"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
 		}
@@ -196,43 +196,6 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "LDA Model",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/e0709287@u.nus.edu/LDAModel - Text"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/BeerProcessedCSVBlob')]",
@@ -555,7 +518,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Data Processing Data Flow')]",
+			"name": "[concat(parameters('factoryName'), '/Data Processing RecommenderModel Data Flow')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -611,7 +574,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/BatchIngestPipeline')]",
+			"name": "[concat(parameters('factoryName'), '/BeerPipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -649,7 +612,34 @@
 						}
 					},
 					{
-						"name": "Data Processing Data Flow",
+						"name": "LDA Model",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Batch Ingestion Data Flow",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/e0709287@u.nus.edu/LDAModel - Text"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Data Processing RecommenderModel Data Flow",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
@@ -669,7 +659,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Data Processing Data Flow",
+								"referenceName": "Data Processing RecommenderModel Data Flow",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -699,7 +689,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Batch Ingestion Data Flow')]",
-				"[concat(variables('factoryId'), '/dataflows/Data Processing Data Flow')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]",
+				"[concat(variables('factoryId'), '/dataflows/Data Processing RecommenderModel Data Flow')]"
 			]
 		},
 		{
@@ -921,7 +912,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Data Processing Data Flow",
+								"referenceName": "Data Processing RecommenderModel Data Flow",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -952,7 +943,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceSQLBeerProject')]",
 				"[concat(variables('factoryId'), '/datasets/FullBeerProjectcsv')]",
-				"[concat(variables('factoryId'), '/dataflows/Data Processing Data Flow')]"
+				"[concat(variables('factoryId'), '/dataflows/Data Processing RecommenderModel Data Flow')]"
 			]
 		},
 		{
@@ -977,13 +968,13 @@
 					},
 					{
 						"pipelineReference": {
-							"referenceName": "BatchIngestPipeline",
+							"referenceName": "BeerPipeline",
 							"type": "PipelineReference"
 						},
 						"parameters": {
 							"windowStart": {
 								"type": "Expression",
-								"value": "[parameters('Trigger_1mg_properties_BatchIngestPipeline_parameters_windowStart')]"
+								"value": "[parameters('Trigger_1mg_properties_BeerPipeline_parameters_windowStart')]"
 							}
 						}
 					}
@@ -1000,7 +991,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/OLD')]",
-				"[concat(variables('factoryId'), '/pipelines/BatchIngestPipeline')]"
+				"[concat(variables('factoryId'), '/pipelines/BeerPipeline')]"
 			]
 		}
 	]
