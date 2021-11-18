@@ -26,9 +26,6 @@
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://KeyVault-Beer.vault.azure.net/"
 		},
-		"Trigger_1mg_properties_OLD_parameters_windowStart": {
-			"value": "@trigger().scheduledTime"
-		},
 		"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
 			"value": "@trigger().scheduledTime"
 		},

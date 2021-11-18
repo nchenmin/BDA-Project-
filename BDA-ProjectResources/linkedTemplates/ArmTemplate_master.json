@@ -35,10 +35,6 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-Beer.vault.azure.net/"
 		},
-		"Trigger_1mg_properties_OLD_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
-		},
 		"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
@@ -90,9 +86,6 @@
 					},
 					"AzureKeyVault1_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
-					},
-					"Trigger_1mg_properties_OLD_parameters_windowStart": {
-						"value": "[parameters('Trigger_1mg_properties_OLD_parameters_windowStart')]"
 					},
 					"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
 						"value": "[parameters('Trigger_1mg_properties_BeerPipeline_parameters_windowStart')]"

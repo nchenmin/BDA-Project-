@@ -35,10 +35,6 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-Beer.vault.azure.net/"
 		},
-		"Trigger_1mg_properties_OLD_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
-		},
 		"Trigger_1mg_properties_BeerPipeline_parameters_windowStart": {
 			"type": "string",
 			"defaultValue": "@trigger().scheduledTime"
@@ -790,18 +786,6 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "OLD",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"windowStart": {
-								"type": "Expression",
-								"value": "[parameters('Trigger_1mg_properties_OLD_parameters_windowStart')]"
-							}
-						}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "BeerPipeline",
 							"type": "PipelineReference"
 						},
@@ -819,13 +803,11 @@
 						"frequency": "Month",
 						"interval": 1,
 						"startTime": "2021-10-28T14:00:00",
-						"timeZone": "Singapore Standard Time",
-						"schedule": {}
+						"timeZone": "Singapore Standard Time"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/OLD')]",
 				"[concat(variables('factoryId'), '/pipelines/BeerPipeline')]"
 			]
 		},
@@ -993,6 +975,49 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobstorageCSV')]",
 				"[concat(variables('factoryId'), '/datasets/BeerProcessedCSVBlob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Recommender Model')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Recommender Model",
+				"activities": [
+					{
+						"name": "Recommender Model",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/e0709287@u.nus.edu/BeerRecommenderModel"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"windowStart": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
 			]
 		}
 	]
